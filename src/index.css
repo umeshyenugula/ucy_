@@ -36,6 +36,42 @@
   --edge: clamp(1.5rem, 6vw, 5rem);
 }
 
+/* Dark theme overrides applied via html[data-theme='dark'] */
+html[data-theme='dark'] {
+  --void: #07060a;
+  --void-2: #09080c;
+  --mist: #f5f5f7;
+  --rgb-ink: 245,245,247;
+  --rgb-violet: 150,100,255;
+
+  --bg: var(--void);
+  --bg-2: var(--void-2);
+
+  --text: var(--mist);
+  --dim: rgba(var(--rgb-ink), 0.65);
+  --dim-2: rgba(var(--rgb-ink), 0.42);
+  --line: rgba(var(--rgb-ink), 0.06);
+  --line-2: rgba(var(--rgb-ink), 0.12);
+
+  --accent: #b08cff;
+  --accent-2: #8b5cf6;
+  --accent-soft: rgba(var(--rgb-violet), 0.08);
+  --accent-line: rgba(var(--rgb-violet), 0.32);
+}
+
+/* In dark mode, make only the Hero component use dark text by overriding variables locally. */
+html[data-theme='dark'] #hero {
+  /* dark hero text */
+  --text: #0c0a10;
+  /* keep dim colors consistent with a dark-on-light look for the hero */
+  --dim: rgba(12,10,16,0.62);
+  --dim-2: rgba(12,10,16,0.38);
+  --line: rgba(12,10,16,0.06);
+  --line-2: rgba(12,10,16,0.12);
+  /* ensure hero text inherits the overridden variable */
+  color: var(--text);
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; background: var(--void); }
 body {
@@ -145,7 +181,7 @@ nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 500;
   display: flex; justify-content: space-between; align-items: center;
   padding: 1.4rem var(--edge);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.6) 70%, transparent);
+  background: linear-gradient(180deg, rgba(var(--rgb-ink), 0.04), rgba(var(--rgb-ink), 0.06) 40%, transparent);
   backdrop-filter: blur(8px);
   font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.02em; font-weight: 600;
 }
@@ -164,6 +200,23 @@ nav .links .cta:hover { border-color: var(--accent-line); color: var(--accent); 
   border-radius: 50%; -webkit-tap-highlight-color: transparent;
 }
 .burger span { width: 20px; height: 2px; background: var(--text); border-radius: 2px; transition: transform 0.3s var(--ease), opacity 0.3s var(--ease); }
+
+/* theme toggle button (small circular control) */
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0;
+  width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+  color: var(--text);
+  border: 1px solid var(--line-2);
+  background: linear-gradient(180deg, rgba(var(--rgb-ink), 0.02), rgba(var(--rgb-ink), 0.03));
+  transition: background 0.18s var(--ease), color 0.18s var(--ease), transform 0.12s var(--ease);
+}
+.theme-toggle:hover { transform: translateY(-2px); }
+.theme-toggle svg { display: block; }
+
+/* make the toggle sit nicely on mobile along with burger */
+@media (max-width: 760px) {
+  .theme-toggle { position: absolute; right: 80px; top: 10px; }
+}
 
 /* ---------- mobile nav — full-screen menu, cleanly centered & staggered ---------- */
 @media (max-width: 760px) {
