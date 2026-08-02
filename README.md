@@ -44,9 +44,3 @@ src/
   index.css     — all styles, fonts, palette, responsive rules, animations
 ```
 
-## Things worth doing next
-
-- Swap `HERO_IMG` in `Hero.jsx` for your own photo
-- Replace the "Live Demo" placeholder links in `ProjectCard.jsx` / `data/projects.js`
-  with real deployed URLs once available
-- Double check the Manrope/Inter weights render the way you want at your actual screen sizes
