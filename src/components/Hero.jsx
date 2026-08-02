@@ -1,5 +1,4 @@
-// Placeholder background photo pulled from Unsplash — swap HERO_IMG for your
-// own image whenever you're ready, everything else adapts automatically.
+
 const HERO_IMG =
   'https://res.cloudinary.com/dsu5knb1g/image/upload/v1785514822/CSI/Team/nvhbowilzyxedleaoh1m.jpg'
 
