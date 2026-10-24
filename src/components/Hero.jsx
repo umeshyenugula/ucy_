@@ -1,42 +1,51 @@
+import { useRef } from 'react'
+import { Link } from '../router.jsx'
+import { useScene } from '../hooks.js'
 
-const HERO_IMG =
-  'https://res.cloudinary.com/dsu5knb1g/image/upload/v1785514822/CSI/Team/nvhbowilzyxedleaoh1m.jpg'
+// Opening shot. On load the headline lifts in word by word; as you scroll, "stays up." grows
+// heavier (the one dynamic detail) while the whole stage recedes into the next chapter.
+const LINE1 = ['I', 'build', 'software']
+const LINE2 = ['that', 'stays', 'up.']
 
 export default function Hero() {
+  const ref = useRef(null)
+  useScene(ref)
+  let i = 0
+  const word = (w, cls = '') => (
+    <span className="mask" key={w + i}>
+      <span className={`w ${cls}`} style={{ '--i': i++ }}>
+        {w}
+      </span>
+    </span>
+  )
   return (
-    <section id="hero">
-      <div className="hero-bg">
-        <img src={HERO_IMG} alt="" loading="eager" />
-        <div className="hero-bg-veil" />
-      </div>
-
-      <div className="hero-inner">
-        <h1 className="hero-name" data-reveal data-reveal-type="blur">
-          Umesh Chandran
-          <br />
-          <span className="last">Yenugula</span>
-        </h1>
-        <p className="hero-role" data-reveal data-reveal-d="1" data-reveal-type="left">
-          Computer Science undergraduate building full-stack, security-minded software , React and
-          Next.js on the front, FastAPI/Django/Flask on the back, shipped on Docker, Render and
-          DigitalOcean.
-        </p>
-        <div className="hero-meta" data-reveal data-reveal-d="2" data-reveal-type="scale">
-          <div className="hero-stat">
-            <b>9.38</b>
-            <span>CGPA</span>
-          </div>
-          <div className="hero-stat">
-            <b>2024–28</b>
-            <span>B.Tech CSE</span>
-          </div>
-          <div className="hero-stat">
-            <b>7</b>
-            <span>Shipped Projects</span>
+    <section className="hero" ref={ref}>
+      <div className="stage wrap">
+        <div className="hero-body">
+          <h1 className="hero-title" aria-label="I build software that stays up.">
+            <span className="hl" aria-hidden="true">
+              {LINE1.map((w) => word(w))}
+            </span>
+            <span className="hl dyn" aria-hidden="true">
+              {LINE2.map((w, k) => word(w, k > 0 ? 'bolden' : ''))}
+            </span>
+          </h1>
+          <p className="hero-sub">
+            Full-stack engineer shipping with React, Vite, Next.js and TypeScript on the front, and Go and Python (FastAPI, Django, Flask) on the back.
+            Three flagship systems below are the proof, and each one runs in your browser.
+          </p>
+          <div className="hero-cta">
+            <Link to="/work" className="btn solid">
+              See the work
+            </Link>
+            <Link to="/about" className="btn line">
+              About me
+            </Link>
           </div>
         </div>
-        <div className="hero-scroll" data-reveal data-reveal-d="3">
-          <span className="bar" /> scroll 
+        <div className="cue" aria-hidden="true">
+          <span>Scroll</span>
+          <i />
         </div>
       </div>
     </section>

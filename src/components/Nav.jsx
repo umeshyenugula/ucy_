@@ -1,7 +1,32 @@
 import { useEffect, useState } from 'react'
+import { Link, useRouter } from '../router.jsx'
+import { subscribe } from '../hooks.js'
+import ThemeToggle from './ThemeToggle.jsx'
 
-export default function Nav({ page, onNavigate, theme = 'light', onToggleTheme = () => {} }) {
+const LINKS = [
+  ['/', 'Home'],
+  ['/work', 'Work'],
+  ['/about', 'About'],
+  ['/contact', 'Contact'],
+]
+
+export default function Nav() {
+  const { path } = useRouter()
   const [open, setOpen] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const [solid, setSolid] = useState(false)
+
+  useEffect(() => {
+    let last = window.scrollY
+    return subscribe(() => {
+      const y = window.scrollY
+      setSolid(y > 12)
+      if (Math.abs(y - last) > 8) {
+        setHidden(y > last && y > 240)
+        last = y
+      }
+    })
+  }, [])
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -10,50 +35,43 @@ export default function Nav({ page, onNavigate, theme = 'light', onToggleTheme =
     }
   }, [open])
 
-  function go(nextPage, id) {
-    setOpen(false)
-    onNavigate(nextPage, id)
-  }
+  useEffect(() => setOpen(false), [path])
+
+  const active = (to) => (to === '/' ? path === '/' : path === to || path.startsWith(to + '/'))
 
   return (
-    <nav className={open ? 'nav-open' : ''}>
-      <button className="mark" onClick={() => go('home')} aria-label="Home">
-        <span className="dot" />UCY_
-      </button>
-      <div className={`links ${open ? 'links-open' : ''}`} id="navLinks">
-        <button onClick={() => go('home', 'about')}>Profile</button>
-        <button onClick={() => go('home', 'skills')}>Skills</button>
-        <button onClick={() => go(page === 'home' ? 'home' : 'projects', page === 'home' ? 'projects-preview' : undefined)}>Work</button>
-        <button onClick={() => go('home', 'contact')}>Contact</button>
-        <button className="cta magnetic" onClick={() => go('projects')}>
-          Projects →
-        </button>
+    <header className={`nav ${solid ? 'solid' : ''} ${hidden && !open ? 'hidden' : ''} ${open ? 'open' : ''}`}>
+      <div className="nav-bar">
+        <Link to="/" className="brand" aria-label="UCY, home">
+          <span className="brand-name">
+            UCY<i aria-hidden="true">_</i>
+          </span>
+        </Link>
+        <nav className="nav-links" aria-label="Primary">
+          {LINKS.map(([to, label]) => (
+            <Link key={to} to={to} className={active(to) ? 'on' : ''} aria-current={active(to) ? 'page' : undefined}>
+              {label}
+            </Link>
+          ))}
+        </nav>
+        <div className="nav-end">
+          <ThemeToggle />
+          <a className="btn small solid nav-cta" href="mailto:umeshyenugula2007@gmail.com">
+            Email me
+          </a>
+          <button className="burger" aria-label="Menu" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+            <span />
+            <span />
+          </button>
+        </div>
       </div>
-      <button className="theme-toggle" onClick={onToggleTheme} aria-label="Toggle theme" title={theme === 'dark' ? 'Switch to light' : 'Switch to dark'}>
-        {theme === 'dark' ? (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-          </svg>
-        ) : (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-          </svg>
-        )}
-      </button>
-
-      <button
-        className="burger"
-        id="navBurger"
-        aria-label="Toggle menu"
-        aria-expanded={open}
-        aria-controls="navLinks"
-        onClick={() => setOpen((v) => !v)}
-      >
-        <span />
-        <span />
-        <span />
-      </button>
-    </nav>
+      <nav className="sheet" aria-label="Mobile">
+        {LINKS.map(([to, label], i) => (
+          <Link key={to} to={to} style={{ '--i': i }} className={path === to ? 'on' : ''}>
+            {label}
+          </Link>
+        ))}
+      </nav>
+    </header>
   )
 }
