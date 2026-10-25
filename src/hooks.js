@@ -4,12 +4,22 @@ export const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v))
 export const prefersReduced = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 /* ---- one shared scroll loop for every scrubbed element ---- */
+// Subscribers get the frame time (seconds) and return true while they are still easing, so the
+// loop keeps running until everything has settled and then goes back to sleep.
 const subs = new Set()
 let raf = 0
 let bound = false
-const run = () => {
+let lastT = 0
+const run = (t) => {
   raf = 0
-  subs.forEach((fn) => fn())
+  const dt = lastT ? Math.min(0.05, (t - lastT) / 1000) : 1 / 60
+  lastT = t
+  let again = false
+  subs.forEach((fn) => {
+    if (fn(dt)) again = true
+  })
+  if (again) schedule()
+  else lastT = 0
 }
 const schedule = () => {
   if (!raf) raf = requestAnimationFrame(run)
@@ -27,7 +37,11 @@ export function subscribe(fn) {
 
 // Writes --p (0..1) on the element as it scrolls. pin=true: progress through a tall section whose
 // child is position:sticky. pin=false: progress of the element crossing the viewport.
-export function useScene(ref, { pin = true, onUpdate } = {}) {
+// The shown progress chases the scroll position with exponential damping (so it never jerks), and
+// `maxSpeed` (progress per second) caps how fast it may move, so a fast fling cannot flash past
+// content that has to be read: beats keep stepping, each staying on screen long enough.
+const EASE = 9
+export function useScene(ref, { pin = true, onUpdate, maxSpeed = 0 } = {}) {
   const cb = useRef(onUpdate)
   cb.current = onUpdate
   useEffect(() => {
@@ -38,26 +52,37 @@ export function useScene(ref, { pin = true, onUpdate } = {}) {
       cb.current && cb.current(1)
       return
     }
-    let last = -1
-    const fn = () => {
+    let cur = null
+    let shown = -1
+    const fn = (dt) => {
       const r = el.getBoundingClientRect()
       const vh = window.innerHeight
-      if (r.bottom < -vh || r.top > 2 * vh) return
-      let p
+      if (r.bottom < -vh || r.top > 2 * vh) return false
+      let t
       if (pin) {
         const total = r.height - vh
-        p = total > 0 ? -r.top / total : 0
+        t = total > 0 ? -r.top / total : 0
       } else {
-        p = (vh - r.top) / (vh + r.height)
+        t = (vh - r.top) / (vh + r.height)
       }
-      p = clamp(p)
-      if (Math.abs(p - last) < 0.0004) return
-      last = p
-      el.style.setProperty('--p', p.toFixed(4))
-      cb.current && cb.current(p)
+      t = clamp(t)
+      if (cur === null) cur = t
+      const d = t - cur
+      if (Math.abs(d) < 0.0002) cur = t
+      else {
+        let step = d * (1 - Math.exp(-dt * EASE))
+        if (maxSpeed) step = clamp(step, -maxSpeed * dt, maxSpeed * dt)
+        cur += step
+      }
+      if (cur !== shown) {
+        shown = cur
+        el.style.setProperty('--p', cur.toFixed(4))
+        cb.current && cb.current(cur)
+      }
+      return cur !== t
     }
     return subscribe(fn)
-  }, [ref, pin])
+  }, [ref, pin, maxSpeed])
 }
 
 // fade-up for [data-reveal], re-armed on every route change

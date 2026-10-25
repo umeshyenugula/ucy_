@@ -11,30 +11,29 @@ import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
 import NotFound from './pages/NotFound.jsx'
 import { projects } from './data/projects.js'
-
-const BASE = 'Umesh Chandran Yenugula'
+import { applySeo } from './seo-runtime.js'
 
 function resolve(path) {
-  if (path === '/') return { page: <Home />, title: `${BASE} — Full-Stack & Systems Engineer` }
-  if (path === '/work') return { page: <Work />, title: `Work — ${BASE}` }
-  if (path === '/about') return { page: <About />, title: `About — ${BASE}` }
-  if (path === '/contact') return { page: <Contact />, title: `Contact — ${BASE}` }
+  if (path === '/') return { page: <Home /> }
+  if (path === '/work') return { page: <Work /> }
+  if (path === '/about') return { page: <About /> }
+  if (path === '/contact') return { page: <Contact /> }
   const m = path.match(/^\/work\/([\w-]+)$/)
   if (m) {
     const p = projects.find((x) => x.id === m[1])
-    if (p) return { page: <Project id={p.id} />, title: `${p.title} — ${BASE}` }
+    if (p) return { page: <Project id={p.id} /> }
   }
-  return { page: <NotFound />, title: `Not found — ${BASE}` }
+  return { page: <NotFound /> }
 }
 
 export default function App() {
   const { path } = useRouter()
   const theme = useThemeState()
-  const { page, title } = resolve(path)
+  const { page } = resolve(path)
 
   useEffect(() => {
-    document.title = title
-  }, [title])
+    applySeo(path)
+  }, [path])
   useReveal(path)
 
   return (

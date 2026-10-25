@@ -1,8 +1,8 @@
-import { useRef } from 'react'
+import { Fragment, useRef } from 'react'
 import { Link } from '../router.jsx'
 import { useScene } from '../hooks.js'
 
-// Opening shot. On load the headline lifts in word by word; as you scroll, "stays up." grows
+// Opening shot. On load the headline lifts in word by word; as you scroll, "can trust." grows
 // heavier (the one dynamic detail) while the whole stage recedes into the next chapter.
 const LINE1 = ['I', 'build', 'software']
 const LINE2 = ['that', 'stays', 'up.']
@@ -22,12 +22,22 @@ export default function Hero() {
     <section className="hero" ref={ref}>
       <div className="stage wrap">
         <div className="hero-body">
-          <h1 className="hero-title" aria-label="I build software that stays up.">
-            <span className="hl" aria-hidden="true">
-              {LINE1.map((w) => word(w))}
-            </span>
-            <span className="hl dyn" aria-hidden="true">
-              {LINE2.map((w, k) => word(w, k > 0 ? 'bolden' : ''))}
+          <h1 className="hero-title">
+            <span className="hl">
+              {LINE1.map((w, k) => (
+                <Fragment key={w}>
+                  {k > 0 && ' '}
+                  {word(w)}
+                </Fragment>
+              ))}
+            </span>{' '}
+            <span className="hl dyn">
+              {LINE2.map((w, k) => (
+                <Fragment key={w}>
+                  {k > 0 && ' '}
+                  {word(w, k > 0 ? 'bolden' : '')}
+                </Fragment>
+              ))}
             </span>
           </h1>
           <p className="hero-sub">

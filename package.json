@@ -1,11 +1,11 @@
 {
   "name": "umesh-portfolio",
   "private": true,
-  "version": "2.0.0",
+  "version": "3.4.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/seo.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -9,7 +9,7 @@ import { useScene, clamp } from '../hooks.js'
 const fmt = (v, d) => (d ? v.toFixed(d) : String(Math.round(v)))
 const two = (n) => String(n).padStart(2, '0')
 
-export default function BeatScene({ id, chapter, beats, per = 95 }) {
+export default function BeatScene({ id, chapter, beats, per = 95, beatSeconds = 1 }) {
   const ref = useRef(null)
   const nums = useRef([])
   const items = useRef([])
@@ -17,6 +17,7 @@ export default function BeatScene({ id, chapter, beats, per = 95 }) {
   const active = useRef(-1)
 
   useScene(ref, {
+    maxSpeed: 1 / beats.length / beatSeconds,
     onUpdate: (p) => {
       const n = beats.length
       const idx = Math.min(n - 1, Math.floor(p * n))

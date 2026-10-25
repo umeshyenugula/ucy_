@@ -10,7 +10,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="wrap">
         <div className="foot-top">
-          <h2 className="foot-title">Have a system that needs to stay up? Let’s talk.</h2>
+          <h2 className="foot-title">Need a system people can trust? Let’s talk.</h2>
           <a className="foot-mail" href={`mailto:${EMAIL}`}>
             {EMAIL}
             <svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">

@@ -34,7 +34,7 @@ GitHub Pages needs a `404.html` copy of `index.html`.
 (`--p`, 0 to 1) and the stylesheet derives every beat from it with `calc()` and `clamp()`. There is no
 per-frame React rendering. Edit the copy in `src/pages/Home.jsx` (`STORY`, `PROOF` arrays).
 
-- `components/Hero.jsx` word-by-word load-in, "stays up." gains weight as you scroll
+- `components/Hero.jsx` word-by-word load-in, "can trust." gains weight as you scroll
 - `components/BeatScene.jsx` pinned scene, one beat at a time, count-up numbers
 - `components/WorkStack.jsx` stacking cards that recede as the next arrives
 - `components/Wordmark.jsx` footer name: fixed-width letter boxes, idle weight wave, swells toward the pointer
@@ -63,6 +63,19 @@ To change a flow, edit the step arrays. To add a project visual, add a `viz` key
 - Skills, courses, profiles, email: `src/data/profile.js`
 - Home story copy: `STORY` and `PROOF` in `src/pages/Home.jsx`
 - Colours: CSS variables at the top of `src/index.css`; background motion is `Backdrop.jsx` + `.bg*` rules
+
+## SEO
+
+The site is a single-page app, so search engines and link-preview bots get their content from a build step:
+
+- `npm run build` runs `vite build` and then `scripts/seo.mjs`, which writes a real HTML file for every route (`/`, `/work`, `/about`, `/contact`, each `/work/<id>`) plus `404.html`. Each has its own `<title>`, description, canonical URL, Open Graph and Twitter tags, JSON-LD, and crawlable text inside `#root` (React replaces it on load, with no flash).
+- **Set your domain before deploying:** `SITE_URL=https://your-domain.com npm run build` (or copy `.env.example` to `.env`). That enables canonical links, `og:image`, structured data and `sitemap.xml`, and adds the sitemap line to `robots.txt`. Without it the build still works and prints a warning.
+- Metadata and structured data live in one place, `src/seo.js` (Person, WebSite, CollectionPage, ProfilePage, ContactPage, SoftwareSourceCode and breadcrumbs). `src/seo-runtime.js` keeps the head correct during in-app navigation. The 404 page is `noindex`.
+- `public/og.png` is the 1200x630 share image. After deploying, submit `/sitemap.xml` in Google Search Console.
+
+## Scroll behaviour
+
+Scene progress (`src/hooks.js`) is eased toward the scroll position, so animation never jerks. Story scenes also cap how fast they may advance (`beatSeconds`, default 1 s per beat), so even a hard fling leaves every beat on screen long enough to read.
 
 ## Accessibility and performance
 

@@ -79,8 +79,8 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <BeatScene id="story" chapter="Chapter one · The approach" beats={STORY} per={72} />
-      <BeatScene id="proof" chapter="Chapter two · The proof" beats={PROOF} per={64} />
+      <BeatScene id="story" chapter="Chapter one · The approach" beats={STORY} per={80} />
+      <BeatScene id="proof" chapter="Chapter two · The proof" beats={PROOF} per={72} />
       <section className="skillproof wrap">
         <p className="chapter" data-reveal>
           Chapter three · Skills, with receipts
