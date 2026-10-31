@@ -21,12 +21,29 @@ Node 18+.
 | `/work/jnana-setu` | JñānaSetu: live architecture with four scenarios (answer, refuse to guess, ingest, trust boundaries) |
 | `/work/vidura-niti` | ViduraNīti: spend control-room simulator (amount, ML risk, approver, Algorand outcome) |
 | `/work/flasio` | Flasio: request lifecycle, failing handler, opt-in services and CLI startup (from ARCHITECTURE.md) |
+| `/stack` | The stack as a periodic table: every tool is an element, pick a project and its formula assembles and its elements bond |
 | `/about` | Education, leadership, hackathon, stack, coursework, coding profiles |
 | `/contact` | Email (always one line), links, local time |
 
 **Deploying:** the site uses real paths, so the host must serve `index.html` for unknown URLs.
 `vercel.json` (Vercel) and `public/_redirects` (Netlify, Render static sites) are included.
 GitHub Pages needs a `404.html` copy of `index.html`.
+
+## The Stack page (`/stack`)
+
+Everything on it comes from one data file, `src/data/stack.js`: six layers (Interface, Services, Data, Intelligence, Trust & money, Runtime). Each tool has a name (`n`), a unique two-letter symbol (`s`, capital then lower case), the projects that use it (`p`) and a one-line note. The **atomic number is the tool's position in the file**, top to bottom, so reordering renumbers the table. A tool with an empty `p` belongs to the **Toolkit** compound, meaning "in my toolkit, but not part of these three systems": it gets a dashed tile and no electrons, so the page never claims more than the projects show. In development a console warning fires if a symbol is missing, malformed or used twice. Add `short` to a tool when its name is too long for a tile.
+
+It is drawn by `src/components/PeriodicStack.jsx` (styles: the "periodic table" block at the end of `src/index.css`). No libraries.
+
+- **Table**: one row per layer, nine columns on a laptop (Services, the widest layer, has nine tools). Tile colour is the layer; layer hues are kept 30 degrees or more away from the project hues so a tile is never mistaken for an electron. Under 1100px the layer name moves above its tiles and the table reflows to six columns; under 760px, three columns.
+- **Electrons**: one dot per project that uses the tool, each project on its own tilted orbital plane and period (`ORBIT` in the component). Pure CSS: a tilted plane, squashed to an ellipse, a revolving arm and a counter-rotating dot so it stays round. They pause when the table is off screen or a tile is dimmed.
+- **Compounds**: the picker (JñānaSetu, ViduraNīti, Flasio, Toolkit; click the active one again to see the whole table). The formula is every member in atomic-number order and assembles term by term, the members light up in the compound's colour in the same order, and everything else steps back.
+- **Bond web**: drawn after the tiles are measured (and again on resize) as the minimum spanning tree of the lit tiles plus every pair that touches, from the lower atomic number to the higher, so the flow runs interface to runtime. It describes the table, not the call graph; the architecture pages do that. Toolkit bonds are dashed and static. Hidden on phones.
+- **Tilting tiles**: on a mouse, a tile tilts toward the pointer (CSS variables written straight to the element, no React state). Touch and reduced motion get no tilt.
+- **Inspector dock**: sticks to the bottom of the screen while the table is in view. Hover or keyboard focus previews an element, click or tap pins it (Unpin or Escape releases it); with nothing selected it summarises the compound. A pinned element's bond chips link to the project pages.
+- **Keyboard and screen readers**: tiles are buttons with a full label (name, symbol, number, layer, projects), one tab stop for the whole table with arrow keys to move between tiles, the dock is a live region, and the formula has a plain-text equivalent.
+- **Reduced motion**: no assembly animation, no orbiting (electrons rest at fixed angles), bonds drawn static.
+- Gotcha worth knowing: paint order inside the table is tile faces, then the bond web, then tile contents, so bonds run behind symbols. That only works while a resting tile does not form a stacking context, so do not add `transform`, `opacity`, `filter` or `z-index` to `.pt-tile` itself. Dimmed and hovered tiles may, because they are meant to leave that layering.
 
 ## How the scroll story works
 

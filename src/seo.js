@@ -3,6 +3,7 @@
 // (scripts/seo.mjs writes a real HTML file per route). Plain JS, no browser APIs, safe in Node.
 import { projects } from './data/projects.js'
 import { SOCIALS } from './data/profile.js'
+import { LAYERS, techList } from './data/stack.js'
 
 export const NAME = 'Umesh Chandran Yenugula'
 export const SITE_NAME = 'UCY — Umesh Chandran Yenugula'
@@ -10,7 +11,7 @@ export const ROLE = 'Full-Stack Engineer'
 const COLLEGE = 'Gokaraju Rangaraju Institute of Engineering and Technology'
 const KNOWS = ['React', 'Vite', 'Next.js', 'TypeScript', 'Go', 'Python', 'FastAPI', 'Django', 'Flask', 'PostgreSQL', 'Redis', 'Docker', 'REST APIs', 'Retrieval-augmented generation', 'ASGI']
 
-export const allRoutes = () => ['/', '/work', '/about', '/contact', ...projects.map((p) => `/work/${p.id}`)]
+export const allRoutes = () => ['/', '/work', '/stack', '/about', '/contact', ...projects.map((p) => `/work/${p.id}`)]
 
 export function routeMeta(path) {
   if (path === '/')
@@ -22,6 +23,11 @@ export function routeMeta(path) {
     return {
       title: `Work — ${NAME}`,
       description: 'Three flagship systems with live architectures: JñānaSetu (multi-tenant RAG platform), ViduraNīti (AI-agent spending governance) and Flasio (async ASGI framework on PyPI).',
+    }
+  if (path === '/stack')
+    return {
+      title: `Stack — ${NAME}`,
+      description: 'The full tech stack, layer by layer, each tool tied to the system that uses it: React, TypeScript, Go, Python, PostgreSQL, Redis, llama.cpp, Algorand and more.',
     }
   if (path === '/about')
     return {
@@ -69,6 +75,11 @@ export function jsonLd(path, origin) {
     graph = [
       { '@type': 'CollectionPage', '@id': `${origin}/work#page`, url: `${origin}/work`, name: meta.title, description: meta.description, isPartOf: { '@id': id('website') }, about: { '@id': id('person') }, mainEntity: { '@type': 'ItemList', itemListElement: projects.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: `${origin}/work/${p.id}`, name: p.title })) } },
       crumbs([['Home', '/'], ['Work', '/work']]),
+    ]
+  else if (path === '/stack')
+    graph = [
+      { '@type': 'CollectionPage', '@id': `${origin}/stack#page`, url: `${origin}/stack`, name: meta.title, description: meta.description, isPartOf: { '@id': id('website') }, about: { '@id': id('person') }, mainEntity: { '@type': 'ItemList', numberOfItems: techList().length, itemListElement: techList().map((t, i) => ({ '@type': 'ListItem', position: i + 1, name: t.n })) } },
+      crumbs([['Home', '/'], ['Stack', '/stack']]),
     ]
   else if (path === '/about') graph = [{ '@type': 'ProfilePage', '@id': `${origin}/about#page`, url: `${origin}/about`, name: meta.title, description: meta.description, mainEntity: { '@id': id('person') } }, person, crumbs([['Home', '/'], ['About', '/about']])]
   else if (path === '/contact') graph = [{ '@type': 'ContactPage', '@id': `${origin}/contact#page`, url: `${origin}/contact`, name: meta.title, description: meta.description, about: { '@id': id('person') } }, person, crumbs([['Home', '/'], ['Contact', '/contact']])]

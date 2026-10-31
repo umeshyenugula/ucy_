@@ -6,6 +6,7 @@ import Footer from './components/Footer.jsx'
 import Backdrop from './components/Backdrop.jsx'
 import Home from './pages/Home.jsx'
 import Work from './pages/Work.jsx'
+import Stack from './pages/Stack.jsx'
 import Project from './pages/Project.jsx'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
@@ -16,6 +17,7 @@ import { applySeo } from './seo-runtime.js'
 function resolve(path) {
   if (path === '/') return { page: <Home /> }
   if (path === '/work') return { page: <Work /> }
+  if (path === '/stack') return { page: <Stack /> }
   if (path === '/about') return { page: <About /> }
   if (path === '/contact') return { page: <Contact /> }
   const m = path.match(/^\/work\/([\w-]+)$/)

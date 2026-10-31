@@ -101,6 +101,11 @@ export default function Home() {
             </li>
           ))}
         </ul>
+        <p data-reveal>
+          <Link to="/stack" className="textlink">
+            Explore the full stack <span aria-hidden="true">→</span>
+          </Link>
+        </p>
       </section>
 
       <WorkStack />

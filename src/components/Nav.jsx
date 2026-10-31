@@ -6,6 +6,7 @@ import ThemeToggle from './ThemeToggle.jsx'
 const LINKS = [
   ['/', 'Home'],
   ['/work', 'Work'],
+  ['/stack', 'Stack'],
   ['/about', 'About'],
   ['/contact', 'Contact'],
 ]

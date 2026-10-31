@@ -8,6 +8,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { loadEnv } from 'vite'
 import { projects } from '../src/data/projects.js'
+import { LAYERS, PROJECTS } from '../src/data/stack.js'
 import { SOCIALS, EMAIL, SKILLS, COURSES, PROOF_MAP } from '../src/data/profile.js'
 import { allRoutes, headFor, routeMeta, NAME } from '../src/seo.js'
 
@@ -48,6 +49,8 @@ function body(p) {
 <h2>Flagship systems</h2>${projectList()}
 <h2>Skills, with receipts</h2>${ul(PROOF_MAP.map((r) => `${link(r.to, r.skill)}: ${esc(r.claim)}`))}
 <h2>Stack</h2>${ul(SKILLS.map(([k, v]) => `${esc(k)}: ${esc(v.join(', '))}`))}`
+  else if (p === '/stack')
+    main = `<h1>Every tool, with a receipt.</h1><p>${esc(m.description)}</p>${LAYERS.map((L) => `<h2>${esc(L.name)}: ${esc(L.tag)}</h2>${ul(L.items.map((t) => `<strong>${esc(t.n)}</strong> (${t.p.length ? t.p.map((id) => esc(PROJECTS.find((x) => x.id === id).label)).join(', ') : 'toolkit'}): ${esc(t.note)}`))}`).join('')}`
   else if (p === '/work') main = `<h1>Work</h1><p>${esc(m.description)}</p>${projectList()}`
   else if (p === '/about')
     main = `<h1>About</h1><p>${esc(m.description)}</p><h2>Skills</h2>${ul(SKILLS.map(([k, v]) => `${esc(k)}: ${esc(v.join(', '))}`))}<h2>Coursework</h2><p>${esc(COURSES.join(', '))}</p>`
@@ -81,7 +84,7 @@ write(path.join(dist, '404.html'), page('/__not-found__'))
 const day = new Date().toISOString().slice(0, 10)
 let robots = fs.existsSync(path.join(dist, 'robots.txt')) ? fs.readFileSync(path.join(dist, 'robots.txt'), 'utf8').trimEnd() : 'User-agent: *\nAllow: /'
 if (origin) {
-  const prio = (r) => (r === '/' ? '1.0' : r === '/work' ? '0.9' : r.startsWith('/work/') ? '0.8' : '0.6')
+  const prio = (r) => (r === '/' ? '1.0' : r === '/work' ? '0.9' : r === '/stack' ? '0.8' : r.startsWith('/work/') ? '0.8' : '0.6')
   write(
     path.join(dist, 'sitemap.xml'),
     `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${allRoutes().map((r) => `  <url><loc>${origin}${r === '/' ? '/' : r}</loc><lastmod>${day}</lastmod><priority>${prio(r)}</priority></url>`).join('\n')}\n</urlset>\n`,
